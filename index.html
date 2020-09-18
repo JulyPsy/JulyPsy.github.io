@@ -1,0 +1,452 @@
+<!-- /**
+* Daw 2-step task
+*(Kool et al., PLOS Computational Biology, 2016, Daw et al., Neuron, 2011 & Decker et al., Psychological Science, 2016).
+**/ -->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Daw 2Step Demo
+	</title>
+	<script src="jspsych/plugins/jquery.min.js"></script> 
+	<script src="jspsych/jspsych.js"></script>
+	<script src="jspsych/plugins/jspsych-fullscreen.js"></script>	
+	<script src="jspsych/plugins/jspsych-survey-html-form.js"></script>	
+	<script src="jspsych/plugins/jspsych-external-html.js"></script>
+	<script src="jspsych/plugins/jspsych-html-keyboard-response.js"></script>
+	<script src="jspsych/plugins/jspsych-daw-2step-stim.js"></script>
+	<script src="jspsych/plugins/jspsych-daw-2step-alien-stim.js"></script>
+	<script src="jspsych/plugins/jspsych-daw-2step-two-aliens-stim.js"></script>
+	<script src="jspsych/plugins/jspsych-survey-text.js"></script>
+	<script src="jspsych/plugins/jspsych-instructions.js"></script>
+	<script src="jspsych/plugins/jspsych-call-function.js"></script>
+	<script src="jspsych/plugins/jspsych-survey-multi-choice-wk.js"></script>
+	<script src="jspsych/plugins/jspsych-survey-text.js"></script>
+	<script src="additional_variables.js"></script>
+	<script src="jspsych/plugins/jquery-ui.min.js"></script>
+	<link href="jspsych/css/jquery-ui.min.css" rel="stylesheet" type="text/css"></link>
+	<link href="jspsych/css/jspsych.css" rel="stylesheet" type="text/css"></link></head>
+	<body></body>
+	<script>
+
+/** Blocks: Basic Setting **/
+
+var open_fullscreen = {
+  type: "fullscreen",
+  fullscreen_mode: true,
+  message: "<p style='font: 30px 微软雅黑'>请做好准备，实验即将开始……</p>",
+  button_label: "<p style='font: 30px 微软雅黑'>点此开始</p>",
+  delay_after: 100
+};
+
+var close_fullscreen = {
+  type: "fullscreen",
+  fullscreen_mode: false,
+  delay_after: 0
+};
+
+var welcome = {
+  type: "html-keyboard-response",
+  stimulus:
+    "<p style='font: bold 42px 微软雅黑; color: #B22222'>\
+    欢迎参与我们的实验</p>\
+    <p style='font: 30px 微软雅黑; color: black'><br/>\
+	<按任意键继续><br/><b>实验过程中请勿退出全屏</b>\
+	<b>如果不慎退出全屏模式，请按  F11  键重新进入全屏模式，并继续任务</b>\
+    <br/><br/></p>\
+    <p style='font: 24px 华文中宋; color: grey'>\
+    华南师范大学 <br/>2020年</p>",
+  post_trial_gap: 100
+};
+
+//var workerid = {
+  //      type: "survey-html-form",
+    //    data: {varname: "workerid"},
+      //  preamble: "你的编号",
+        //html: "<p><input name='Q0' type='number' placeholder='请输入数字' required /></p>",
+        //button_label: "继续",
+  //  };
+
+var begin = {
+  timeline: [
+    open_fullscreen, welcome//, //workerid
+  ]
+};
+
+
+/** set  **/
+
+     
+    var workerid = 787
+	// var hitId = getURLVariable("hitId")
+	// var assignmentId = getURLVariable("assignmentId")
+
+
+
+
+	var nralientrials = 1
+	var nralienstrials = 1   //20
+	var nrpracticetrials = 1  //25
+	var nrtrials = 4  //200
+
+	// set up variables as
+	var max = 0.75
+	var min = 0.25
+	var sd = 0.025
+
+	if (Math.random() > .5) {
+		if(Math.random() > .5) {
+			var p_ps = [0.6, 0.4]
+		} else {
+			var p_ps = [0.4, 0.6]
+		}
+		if(Math.random() > .5) {
+			p_ps = [p_ps, [0.25, 0.75]]
+		} else {
+			p_ps = [p_ps, [0.75, 0.25]]
+		}
+	} else {
+		if(Math.random() > .5) {
+			var p_ps = [0.25, .75]
+		} else {
+			var p_ps = [0.75, 0.25]
+		}
+		if(Math.random() > .5) {
+			p_ps = [p_ps, [0.4, 0.6]]
+		} else {
+			p_ps = [p_ps, [0.6, 0.4]]
+		}
+	}
+
+	if (Math.random() > .5) {
+		if(Math.random() > .5) {
+			var ps = [0.6, 0.4]
+		} else {
+			var ps = [0.4, 0.6]
+		}
+		if(Math.random() > .5) {
+			ps = [ps, [0.25, 0.75]]
+		} else {
+			ps = [ps, [0.75, 0.25]]
+		}
+	} else {
+		if(Math.random() > .5) {
+			var ps = [0.25, .75]
+		} else {
+			var ps = [0.75, 0.25]
+		}
+		if(Math.random() > .5) {
+			ps = [ps, [0.4, 0.6]]
+		} else {
+			ps = [ps, [0.6, 0.4]]
+		}
+	}
+
+	var gaussian = []
+	for (i = 0; i < 1000; i++) {
+		gaussian[i] = createMemberInNormalDistribution(0,sd)
+	}
+
+	var p_alien_1_ps = [1, 1, 1, 0, 1]
+	var p_alien_2_ps = [0, 1, 0, 0, 0]
+
+	var sex = ''
+	var age = 0
+	var score = 0
+
+	//invert colors
+	var change_colors = {
+		type: 'call-function',
+		func: function(){
+			$('.jspsych-display-element').css('background-color', 'black')
+			$('.jspsych-display-element').css('color', 'white')
+		}
+	}
+	var change_colors_back = {
+		type: 'call-function',
+		func: function(){
+			$('.jspsych-display-element').css('background-color', 'white')
+			$('.jspsych-display-element').css('color', 'black')
+		}
+	}
+
+	//consent block
+	var check_consent = function(elem) {
+		if ($('#consent_checkbox').is(':checked')) {
+			return true
+		} else {
+			alert("如果您希望参加，您必须在声明'我同意参加本次研究'旁边的方框中勾选")
+			return false
+		}
+		return false
+	}
+	var consent_block = {
+		type:'external-html',
+		url: "consent.html",
+		cont_btn: "start",
+		check_fn: check_consent
+	}
+
+	//instructions
+	var instructions_1_block = {
+		type: "instructions",
+		pages: [instructions_1a_text,instructions_1b_text,instructions_1c_text,instructions_1d_text,instructions_1e_text,instructions_1f_text],
+		key_forward: "j",
+		key_backward: "f",
+		show_clickable_nav: true,
+	}
+	var instructions_2_block = {
+		type: "instructions",
+		pages: [instructions_2a_text],
+		key_forward: "j",
+		key_backward: "f",
+		show_clickable_nav: true,
+	}
+	var instructions_3_block = {
+		type: "instructions",
+		pages: [instructions_3a_text],
+		key_forward: "j",
+		key_backward: "f",
+		show_clickable_nav: true,
+	}
+	var instructions_4_block = {
+		type: "instructions",
+		pages: [instructions_4a_text,instructions_4b_text,instructions_4c_text,instructions_4d_text,instructions_4e_text,instructions_4f_text()],
+		key_forward: "j",
+		key_backward: "f",
+		show_clickable_nav: true,
+	}
+	var instructions_5_block = {
+		type: "instructions",
+		pages: [instructions_5a_text,instructions_5b_text()],
+		key_forward: "j",
+		key_backward: "f",
+		show_clickable_nav: true,
+	}
+
+	var alien_1_practice_block = {
+		timeline: [
+			{
+				type: "daw-2step-alien-stim",
+				p: function() {
+					return p_alien_1_ps.splice(0,1)
+				},
+			}
+		],
+		repetitions: nralientrials,
+	}
+
+	var alien_2_practice_block = {
+		timeline: [
+			{
+				type: "daw-2step-alien-stim",
+				p: function() {
+					return p_alien_2_ps.splice(0,1)
+				},
+			}
+		],
+		repetitions: nralientrials,
+		state_name: "red",
+	}
+
+	var aliens_practice_block = {
+		timeline:[
+			{
+				type: "daw-2step-two-aliens-stim",
+				ps: [0.1, 0.9],
+			}
+		],
+		repetitions:nralienstrials,
+	}
+
+	var space_practice_block = {
+		timeline: [
+			{
+				type: "daw-2step-stim",
+			}
+		],
+		ps: function() {
+			alldata = jsPsych.data.getLastTrialData('daw-2step-stim')
+			if (alldata.length==0) {
+				return p_ps
+			} else {
+				//drifting probabilities
+				for (j = 0; j < 2; j++) {
+					for (k = 0; k < 2; k++) {
+						p_ps[j][k] = p_ps[j][k]+gaussian[Math.floor(Math.random()*gaussian.length)]
+						p_ps[j][k] = Math.min(p_ps[j][k],Math.max(1.5 - p_ps[j][k], .25))
+						p_ps[j][k] = Math.max(p_ps[j][k], Math.min(0.5 - p_ps[j][k], .75))
+					}
+				}
+				return p_ps
+			}
+		},
+		timing_post_trial: 0,
+		practice: 1,
+		timing_response: -1,
+		SOA: 0,
+		choices: ["F","J"],
+		repetitions:nrpracticetrials,
+	}
+
+	var space_block = {
+		timeline: [
+			{
+				timeline: [
+					{
+						type: "daw-2step-stim",
+						ps: function() {
+							alldata = jsPsych.data.getLastTrialData('daw-2step-stim')
+							if (alldata.length==nrpracticetrials) {
+								return ps
+							} else {
+								//drifting probabilities
+								for (j = 0; j < 2; j++) {
+									for (k = 0; k < 2; k++) {
+										ps[j][k] = ps[j][k]+gaussian[Math.floor(Math.random()*gaussian.length)]
+										ps[j][k] = Math.min(ps[j][k],Math.max(1.5 - ps[j][k], .25))
+										ps[j][k] = Math.max(ps[j][k], Math.min(0.5 - ps[j][k], .75))
+									}
+								}
+								return ps
+							}
+						},
+					},
+				],
+				timing_post_trial: 0,
+				repetitions: nrtrials/2,
+			},
+			{
+				timeline: [
+					{
+						type: 'html-keyboard-response',
+						stimulus: jsPsych.timelineVariable('stimulus'),
+						choices: ['space'],
+					}
+				],
+				timing_post_trial: 0,
+				repetitions: 1,
+			}],
+			timeline_variables: [
+				{type: "daw-2step-stim", stimulus: '<p>你已经完成了 '+nrtrials/2+'/'+nrtrials+' 轮。 现在你可以休息一下<br><br>休息结束后，按 空格键 继续。</p>'},
+				{type: "daw-2step-stim", stimulus: '<p>你已经完成了 '+nrtrials+'/'+nrtrials+' 轮. <br><br>请按 空格键 继续。</p>'},
+			],
+		}
+
+		// store subject ID for every trial
+		jsPsych.data.addProperties({
+			subid: workerid,
+		})
+
+		var save_data_block = {
+			type: 'call-function',
+			func: function(){
+				data = jsPsych.data.get().filter({trial_type: 'daw-2step-stim'}).json()
+				save_data(data,'daw_2step_datanew')
+			},
+		}
+
+		var demographics_block = {
+			timeline: [
+				{
+					type: 'survey-text',
+					preamble: ["请填写以下信息:"],
+					questions: [{prompt: "您今年多大?", required: true}, {prompt: "您的性别是?（女-按0；男-按1）", required: true}],
+				}
+			],
+			loop_function: function(data){
+				var 
+				 //subjects = JSON.parse(jsPsych.data.getLastTrialData().select('responses').values).Q
+				 age_ans = JSON.parse(jsPsych.data.getLastTrialData().select('responses').values).Q0
+				 gender = JSON.parse(jsPsych.data.getLastTrialData().select('responses').values).Q1
+				if ((age_ans == '')||(gender == '')) {
+					alert("请确保你回答了两个问题。")
+					return true
+				}
+				if (isNaN(age_ans)) {
+					alert("请在年龄一栏中输入阿拉伯数字(不要输入任何空格)")
+					return true
+				} else {
+					age = parseInt(age_ans)
+					return false
+				}
+			},
+		}
+
+		var save_subinfo_block = {
+			type: 'call-function',
+			func: function(){
+				demographics_data = jsPsych.data.getLastTrialData()
+				subinfo = {
+					subid: workerid,
+					//assignmentid: "assignmentid",
+					//"subjects": subjects,
+					age: age,
+					gender: gender,
+					time_elapsed: demographics_data.select('time_elapsed').values[0],
+					score: score,
+				}
+				data = (JSON.stringify([subinfo]))
+				save_data(data,'sub_info')
+			},
+		}
+
+
+		var debriefing_block = {
+			type:'external-html',
+			url: "debrief.html",
+			cont_btn: "start",
+		}
+
+
+		var score_block = {
+			type: 'html-keyboard-response',
+			stimulus: function(){
+				scoreincents = score/1
+				scoreindollar = scoreincents/1
+				if (scoreincents > 0){
+					textscore = scoreindollar.toFixed()
+					var text = "<br><br><br><br>你获取了" + textscore + "积分 <br><br><br><br>按任意键继续";
+				} else {
+					var text = "<br><br><br><br>你没有获取积分<br><br>按任意键继续";
+				}
+				return text
+			},
+		}
+
+		var end_block = {
+			type:'external-html',
+			url: "end.html",
+		}
+
+		jsPsych.pluginAPI.preloadImages(images, function(){ startExperiment()})
+		function startExperiment(){
+			jsPsych.init({
+				timeline: [
+				    begin,
+					change_colors,
+					consent_block,
+					instructions_1_block,
+					alien_1_practice_block,
+					instructions_2_block,
+					alien_2_practice_block,
+					instructions_3_block,
+					aliens_practice_block,
+					instructions_4_block,
+					space_practice_block,
+					instructions_5_block,
+					space_block,
+					save_data_block,
+					demographics_block,
+					save_subinfo_block,
+					debriefing_block,
+					score_block,
+					change_colors_back,
+					end_block,
+				],
+			})
+		}
+
+</script>
+</html>
